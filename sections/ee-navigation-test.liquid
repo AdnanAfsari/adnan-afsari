@@ -1,0 +1,298 @@
+<style>
+  .navigation-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    border-bottom: 1px solid {{ section.settings.border_color }};
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 20px;
+  }
+
+  .navigation-{{ section.id }} .nav-container {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: {{ section.settings.nav_height }}px;
+  }
+
+  .navigation-{{ section.id }} .nav-logo a {
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+
+  .navigation-{{ section.id }} .nav-logo {
+    max-width: 151px;
+  }
+
+  .navigation-{{ section.id }} .nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .navigation-{{ section.id }} .bar {
+    width: 25px;
+    height: 3px;
+    background-color: {{ section.settings.hamburger_color }};
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+  }
+
+  .nav-menu-mobile {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .navigation-{{ section.id }} .nav-menu-mobile {
+      position: fixed;
+      left: -100%;
+      top: calc({{ section.settings.nav_height }}px - 9px);
+      flex-direction: column;
+      background-color: #F2F2F2;
+      width: 100%;
+      text-align: center;
+      transition: 0.3s;
+      box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+      padding: 20px 0;
+      gap: 0;
+      height: 124px;
+    }
+
+
+    .navigation-{{ section.id }} .nav-menu-mobile.active {
+      left: 0;
+    }
+
+    .navigation-{{ section.id }} .nav-toggle {
+      display: flex;
+    }
+
+    .navigation-{{ section.id }} .nav-logo {
+      order: 2;
+      margin: 0 auto;
+    }
+
+    .navigation-{{ section.id }} .nav-toggle {
+        order: 1;
+    }
+
+    .navigation-{{ section.id }} .nav-toggle svg:last-child {
+      display: none;
+    }
+
+    .navigation-{{ section.id }} .nav-toggle.active svg:first-child {
+      display: none;
+    }
+
+    .navigation-{{ section.id }} .nav-toggle.active svg:last-child {
+      display: block;
+    }
+
+    .header-button {
+        display: flex;
+        justify-content: center;
+    }
+
+    .nav-menu-desktop {
+      display: none;
+    }
+
+    .nav-menu-mobile {
+        display: block;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .navigation-{{ section.id }} {
+      padding: 0 15px;
+    }
+
+    .navigation-{{ section.id }} .nav-container {
+      height: 60px;
+    }
+  }
+</style>
+
+<nav class="navigation-{{ section.id }}">
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="nav-logo">
+      <a href="{{ routes.root_url }}">
+        {% if section.settings.logo != blank %}
+          {{ section.settings.logo | image_url: width: 200 | image_tag: alt: shop.name, loading: 'lazy' }}
+        {% else %}
+          {{ section.settings.logo_text | default: shop.name }}
+        {% endif %}
+      </a>
+    </div>
+
+    <p class="nav-menu-desktop">{{section.settings.navigation_text}}</p>
+
+    {% if section.settings.cta_text != blank %}
+    <div class="nav-menu-desktop header-button">
+      <a href="{{ section.settings.cta_link }}" class="button-primary button-yellow">{{section.settings.cta_text}}
+        {%- liquid 
+          render 'arrow-icon'
+        %}
+      </a>
+    </div>
+    {% endif %}
+
+    <div class="nav-menu-mobile">
+        <p>{{section.settings.navigation_text}}</p>
+        {% if section.settings.cta_text != blank %}
+        <div class="header-button">
+            <a href="{{ section.settings.cta_link }}" class="button-primary button-yellow">{{section.settings.cta_text}}
+                {%- liquid 
+                render 'arrow-icon'
+                %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    
+
+    <!-- Mobile Menu Toggle -->
+    <div class="nav-toggle">
+      <svg width="20" height="13" viewBox="0 0 20 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 6.5H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1 1.5H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1 11.5H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 13.9997L13.7279 1.27177" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1 1.00031L13.7279 13.7282" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.querySelector('.navigation-{{ section.id }} .nav-toggle');
+    const navMenu = document.querySelector('.navigation-{{ section.id }} .nav-menu-mobile');
+
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', function() {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        
+        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+      });
+
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          navToggle.classList.remove('active');
+          navMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+          navToggle.classList.remove('active');
+          navMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "EE Navigation Menu Test",
+  "tag": "header",
+  "class": "section-navigation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo Text",
+      "default": "TISSO VISION"
+    },
+    {
+      "type": "text",
+      "id": "navigation_text",
+      "label": "Navigation Text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "header",
+      "content": "Navigation Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container Max Width",
+      "min": 1000,
+      "max": 1400,
+      "step": 50,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "nav_height",
+      "label": "Navigation Height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 70,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "CTA Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "SHOP OUT"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    }
+  ],
+  "presets": [
+    {
+      "name": "EE Navigation Menu Test"
+    }
+  ]
+}
+{% endschema %}
