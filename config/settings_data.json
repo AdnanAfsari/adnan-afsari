@@ -55,6 +55,7 @@
     "button_font_weight_secondary": "default",
     "cart_type": "drawer",
     "cart_price_font": "secondary",
+    "auto_open_cart_drawer": true,
     "show_cart_note": false,
     "show_add_discount_code": true,
     "drawer_drop_shadow": true,
@@ -88,6 +89,12 @@
           "nav_height": 65,
           "cta_text": "SHOP OUT",
           "cta_link": ""
+        }
+      },
+      "ee-custom-product-modal": {
+        "type": "ee-custom-product-modal",
+        "settings": {
+          "title": false
         }
       }
     },
