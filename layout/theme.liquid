@@ -61,9 +61,11 @@
       {{ content_for_layout }}
     </main>
 
-    {% sections 'footer-group' %}
+    {% section 'ee-custom-product-modal' %}
 
-    {% render 'search-modal' %}
+    {% comment %} {% sections 'footer-group' %}
+
+    {% render 'search-modal' %} {% endcomment %}
 
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
