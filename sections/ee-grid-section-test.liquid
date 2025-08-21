@@ -1,0 +1,126 @@
+{%- style -%}
+  button,
+  input[type='submit'],
+  input[type='reset'] {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+  }
+
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .grid_test_section .product-grid {
+    width: calc(50% - 13.5px);
+    max-width: calc(33.333% - 13.5px);
+    aspect-ratio: 0.975;
+    position: relative;
+  }
+
+  .grid_test_section .product-grid img {
+    object-fit: cover;
+    object-position: center center;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .modal-selector-quick-view {
+    position: absolute;
+    width: 22px !important;
+    height: 22px !important;
+    z-index: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .grid_test_section .product-grid {
+      width: calc(50% - 13.5px);
+      max-width: calc(50% - 13.5px);
+    }
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <h2>{{ section.settings.title }}</h2>
+  <div class="grid-container">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign product = block.settings.product
+        assign min = 5
+        assign max = 80
+        assign diff = max | minus: min
+        assign random_number = 'now' | date: '%N' | modulo: diff | plus: min
+      -%}
+      {%- case block.type -%}
+        {%- when 'product' -%}
+          <div class="product-grid">
+            {%- if product != blank -%}
+              <img
+                srcset="{{ product.featured_media | image_url }} {{ product.featured_media.width }}w"
+                src="{{ product.featured_media | image_url: width: 533 }}"
+
+                alt="{{ product.featured_media.alt | escape }}"
+                class="motion-reduce"
+                loading="lazy"
+                width="{{ product.featured_media.width }}"
+                height="{{ product.featured_media.height }}"
+              >
+
+              <img
+                style="cursor: pointer; top: {{ random_number }}%; right:{{ random_number }}%"
+                data-target="{{ product.handle}}"
+                class="modal-selector-quick-view"
+                src="https://cdn.shopify.com/s/files/1/0712/2626/1722/files/plus-icon.png?v=1720836364"
+                width="22px"
+                height="22px"
+              >
+            {%- endif -%}
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "EE Grid Test Section",
+  "tag": "section",
+  "class": "grid_test_section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Tisso vison in the wild"
+    }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "name": "Product",
+      "type": "product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "EE Grid Test Section"
+    }
+  ]
+}
+{% endschema %}
