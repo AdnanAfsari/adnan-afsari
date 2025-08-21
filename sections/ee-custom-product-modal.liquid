@@ -253,7 +253,6 @@
                 {% unless used contains variant.option2 %}
                   <div class="color-varient-btn" style="--bubble-color: {{variant.option2 | downcase}};">
                     <input
-                      onchange="letsDoThis()"
                       id="select-two"
                       value="{{ variant.option2 }}"
                       type="radio"
@@ -271,7 +270,7 @@
             {% assign used = '' %}
             <label for="select-one">{{ product.options[0] }}</label>
             <div class="custom-select">
-              <select id="select-one" onchange="letsDoThis()">
+              <select id="select-one">
                 <option value="" selected disabled hidden>Choose your size</option>
                 {% for variant in product.variants %}
                   {% unless used contains variant.option1 %}
@@ -286,7 +285,7 @@
           {% if product.options[2] %}
             {% assign used = '' %}
             <label for="select-one">{{ product.options[2] }}</label>
-            <select id="select-three" onchange="letsDoThis()">
+            <select id="select-three">
               {% for variant in product.variants %}
                 {% unless used contains variant.option3 %}
                   <option value="{{ variant.option3 }}">{{ variant.option3 }}</option>
@@ -377,34 +376,81 @@
 
       // B) Add to Cart button clicked
       if (addBtn) {
-        const id = document.querySelector('#get_product_id')?.value;
+        const id = document.querySelector("#get_product_id")?.value;
         if (!id) return;
 
         const formData = { items: [{ id, quantity: 1 }] };
 
         try {
-          const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            const res = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),
-          });
+            });
 
-          if (!response.ok) throw new Error('Cart add failed');
+            if (!res.ok) throw new Error("Cart add failed");
 
-          if (typeof checkInCart === 'function') checkInCart();
+            let shouldRedirect = true;
 
-          window.location.href = '/cart';
-        } catch (error) {
-          console.error('Add to Cart Error:', error);
+            if (typeof checkInCart === "function") {
+            shouldRedirect = await checkInCart();
+            }
+
+            if (shouldRedirect) {
+            window.location.href = "/cart";
+            } else {
+            console.log("Specific item not in cart → staying on page");
+            this.querySelector("#custom-modal").style.display = "none";
+            }
+        } catch (err) {
+            console.error("Add to Cart Error:", err);
         }
       }
     });
   });
 
-  /**
-   * Keep product variant ID in sync with option selections
-   */
-  function letsDoThis() {
+  async function checkInCart() {
+    try {
+        let response = await fetch(`${window.Shopify.routes.root}cart.js`);
+        let data = await response.json();
+        let cartItems = data.items;
+
+        // look for specific variant in cart
+        let hasTarget = cartItems.some(opt => opt.variant_title === "M / Black");
+
+        if (hasTarget) {
+        // if found, add the gift item
+        let formData = {
+            items: [
+            {
+                id: 53528680661160, // gift variant id
+                quantity: 1,
+            },
+            ],
+        };
+
+        let res = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) throw new Error("Failed to add gift item");
+
+        console.log("Gift item added to cart");
+        return true; // ✅ tell addToCart to redirect
+        }
+
+        return false; // no matching item found
+    } catch (error) {
+        console.error("Error in checkInCart:", error);
+        return false;
+    }
+  }
+  /* Keep product variant ID in sync with option selections */
+  function updateVariant() {
     if (!product) return;
 
     let opt1 = null, opt2 = null, opt3 = null;
@@ -441,22 +487,20 @@
     if (hiddenInput) hiddenInput.value = matchedId;
   }
 
-  /**
-   * Attach listeners so variant updates happen automatically
-   */
+  /*Attach listeners so variant updates happen automatically*/
   function attachVariantListeners() {
     // Dropdowns (select elements)
     document.querySelectorAll('select[id^="select-"]').forEach((select) => {
-      select.addEventListener('change', letsDoThis);
+      select.addEventListener('change', updateVariant);
     });
 
     // Radio buttons / color swatches
     document.querySelectorAll('.switch-input-varient').forEach((radio) => {
-      radio.addEventListener('change', letsDoThis);
+      radio.addEventListener('change', updateVariant);
     });
 
     // Run once on modal load to initialize correct variant
-    letsDoThis();
+    updateVariant();
   }
 </script>
 
