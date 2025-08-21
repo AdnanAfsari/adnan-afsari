@@ -99,10 +99,67 @@
         "btn_link": "",
         "banner_footer_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
       }
+    },
+    "ee_grid_section_test_eyTxEw": {
+      "type": "ee-grid-section-test",
+      "blocks": {
+        "product_p3BFGT": {
+          "type": "product",
+          "settings": {
+            "product": "black-leather-bag"
+          }
+        },
+        "product_LbBkiz": {
+          "type": "product",
+          "settings": {
+            "product": "blue-silk-tuxedo"
+          }
+        },
+        "product_D6LeU7": {
+          "type": "product",
+          "settings": {
+            "product": "chequered-red-shirt"
+          }
+        },
+        "product_kynNyA": {
+          "type": "product",
+          "settings": {
+            "product": "classic-leather-jacket"
+          }
+        },
+        "product_nxNYDx": {
+          "type": "product",
+          "settings": {
+            "product": "classic-varsity-top"
+          }
+        },
+        "product_HDXL73": {
+          "type": "product",
+          "settings": {
+            "product": "dark-denim-top"
+          }
+        }
+      },
+      "block_order": [
+        "product_p3BFGT",
+        "product_LbBkiz",
+        "product_D6LeU7",
+        "product_kynNyA",
+        "product_nxNYDx",
+        "product_HDXL73"
+      ],
+      "name": "EE Grid Test Section",
+      "settings": {
+        "title": "Tisso vison in the wild",
+        "padding_top": 90,
+        "padding_bottom": 36,
+        "container_width": 1300
+      }
     }
   },
   "order": [
     "hero_jVaWmY",
-    "ee_banner_test_wwKrTK"
+    "ee_banner_test_wwKrTK",
+    "ee_grid_section_test_eyTxEw"
   ]
 }
