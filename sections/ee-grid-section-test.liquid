@@ -14,18 +14,18 @@
   .grid-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 4px;
     justify-content: center;
   }
 
-  .grid_test_section .product-grid {
-    width: calc(50% - 13.5px);
-    max-width: calc(33.333% - 13.5px);
+  .grid_test_section .product-grid-test {
+    width: calc(50% - 4px);
+    max-width: calc(50% - 4px);
     aspect-ratio: 0.975;
     position: relative;
   }
 
-  .grid_test_section .product-grid img {
+  .grid_test_section .product-grid-test img {
     object-fit: cover;
     object-position: center center;
     transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -42,15 +42,46 @@
     z-index: 1;
   }
 
-  @media screen and (max-width: 749px) {
-    .grid_test_section .product-grid {
-      width: calc(50% - 13.5px);
-      max-width: calc(50% - 13.5px);
+  .page-width {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding-inline: 10px;
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (max-width: 750px) {
+    .section-{{ section.id }}-padding h2 {
+        font-size: 24px;
+        text-align: center;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .page-width {
+        padding-inline: 20px;
+    }
+    
+    .grid-container {
+        gap: 20px;
+    }
+
+    .grid_test_section .product-grid-test {
+      width: calc(33.333% - 20px);
+      max-width: calc(33.333% - 20px);
+    }
+
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
 {%- endstyle -%}
 
-<div class="page-width">
+<div class="page-width section-{{ section.id }}-padding">
   <h2>{{ section.settings.title }}</h2>
   <div class="grid-container">
     {%- for block in section.blocks -%}
@@ -63,7 +94,7 @@
       -%}
       {%- case block.type -%}
         {%- when 'product' -%}
-          <div class="product-grid">
+          <div class="product-grid-test">
             {%- if product != blank -%}
               <img
                 srcset="{{ product.featured_media | image_url }} {{ product.featured_media.width }}w"
@@ -101,6 +132,36 @@
       "id": "title",
       "label": "Heading",
       "default": "Tisso vison in the wild"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container Max Width",
+      "min": 1000,
+      "max": 1400,
+      "step": 50,
+      "default": 1300,
+      "unit": "px"
     }
   ],
   "max_blocks": 6,
